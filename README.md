@@ -48,14 +48,13 @@ Can refer to [here](https://hackmd.io/vYiT2eZoRDac0K8NU7SA-A#build) for build fi
    ```
 ## Learning:
 ### Use `filename=` or `directory=` ?
-Typically, most fio benchmarkers prefer to use `filename=/dev/certaindevice` for reason:
-- Directly perform test on raw device without partition or filesystem
-[MS-r-r-11], [MS-28k-r-r-15] and [MS-28k-r-r-16] give some insight:
-1. [MS-r-r-11] use `directory=/opt/fio/t0` and, according to config, this will create 8 100g-file under */opt/fio/t0*
-  * 17.2k\*8= 137K IOPS
+Typically, most fio benchmarkers prefer to use `filename=/dev/certaindevice`, because directly performing test on raw device without partition or filesystem will give greater result. [MS-r-r-11], [MS-28k-r-r-15] and [MS-28k-r-r-16] give some insight:
+1. [MS-r-r-11] use `directory=/opt/fio/t0` and, according to config, this will create 8 100g-file under */opt/fio/t0* 
 2. [MS-28r-r-r-15] use `filename=/dev/md0` directly on raw device. However, with the fio files created by round 11, we get close number in IOPS as round 11
-  * 137K IOPS
 3. [MS-28k-r-r-16], I removed all fio files under the mount point */opt/fio/t0*, and use `filename=/dev/md0` directly on raw device.
-  * 238K IOPS
-
+round | IOPS
+---|----
+11 | 137K
+15 | 137K
+16 | 238K
 
