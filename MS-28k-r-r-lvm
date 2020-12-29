@@ -1,0 +1,17 @@
+[28k-r-r]
+name=MS-28k-r-r
+ioengine=libaio
+iodepth=32
+rw=randread
+bs=28k
+direct=1
+size=100g
+time_based
+runtime=60
+group_reporting
+per_job_logs=0
+directory=/mnt/local-storage
+write_bw_log=${ID}_${DATETIME}
+write_lat_log=${ID}_${DATETIME}
+write_iops_log=${ID}_${DATETIME}
+numjobs=16

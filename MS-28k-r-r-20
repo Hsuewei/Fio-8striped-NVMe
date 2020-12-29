@@ -1,0 +1,55 @@
+[global]
+direct=1
+ioengine=libaio
+#group_reporting=1
+per_job_logs=0
+time_based
+runtime=120
+ramp_time=50 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+#filename=/dev/md0
+directory=/opt/fio/t0
+
+# Use 8 stripe but 8 thread to prove Sinisa say something wrong
+# Use "directory="
+# more warm-up time
+# round 20 is round 19 without group reporting
+# Also Please compare round 20 with round 11
+# 	Round 20 is "8 NVme stripe and 8 threads(numjobs=8)"
+# 		each thread got aroud 34.2k in IOPS
+# 		Combined 273K in IOPS
+# 		        Disk stats (read/write):
+# 		        md0: ios=48613921/0, merge=0/0, ticks=0/0,
+# 		        in_queue=0, util=0.00%, aggrios=6078567/0,
+# 		        aggrmerge=0/0, aggrticks=5412437/0, aggrin_queue=5419144, aggrutil=100.00%
+# 		        nvme0n1: ios=6078043/0, merge=0/0, ticks=5780258/0, in_queue=5787255, util=100.00%
+# 		        nvme1n1: ios=6079159/0, merge=0/0, ticks=6235513/0, in_queue=6246121, util=100.00%
+# 		        nvme2n1: ios=6078520/0, merge=0/0, ticks=4452876/0, in_queue=4457538, util=100.00%
+# 		        nvme3n1: ios=6077721/0, merge=0/0, ticks=4593408/0, in_queue=4598972, util=100.00%
+# 		        nvme4n1: ios=6080848/0, merge=0/0, ticks=5241539/0, in_queue=5248073, util=100.00%
+# 		        nvme5n1: ios=6078667/0, merge=0/0, ticks=5540011/0, in_queue=5545818, util=100.00%
+# 		        nvme6n1: ios=6078357/0, merge=0/0, ticks=5593006/0, in_queue=5599545, util=100.00%
+# 		        nvme7n1: ios=6077228/0, merge=0/0, ticks=5862887/0, in_queue=5869836, util=100.00%
+# 	Round 11 is "4 NVme stripe and 8 threads(numjobs=8)"
+#		each thread got around 17.2K in IOPS
+#		Combined 137K in IOPS
+#			Disk stats (read/write):
+#			md0: ios=8598040/3, merge=0/0, ticks=0/0, in_queue=0, util=0.00%, 
+#			aggrios=2152813/0, aggrmerge=0/0, aggrticks=3830037/0, aggrin_queue=3835737, 
+#			aggrutil=99.99%
+#			nvme0n1: ios=2152806/2, merge=0/0, ticks=2652010/0, in_queue=2656752, util=99.97%
+#			nvme2n1: ios=2153440/1, merge=0/0, ticks=4872560/0, in_queue=4878799, util=99.96%
+#			nvme4n1: ios=2151279/0, merge=0/0, ticks=4779023/0, in_queue=4786605, util=99.99%
+#			nvme6n1: ios=2153730/0, merge=0/0, ticks=3016555/0, in_queue=3020793, util=99.96%
+
+
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}

@@ -1,0 +1,26 @@
+[global]
+direct=1
+ioengine=libaio
+group_reporting=1
+per_job_logs=0
+time_based
+runtime=120
+ramp_time=50 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+#filename=/dev/md0
+directory=/opt/fio/t0
+
+# Use 8 stripe but 8 thread to prove Sinisa say something wrong
+# Use "directory="
+# more warm-up time
+# See log, I got 273K in IOPS and around 7.8MB/s in bandwidth which are quite close to what Sinisa said
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}
