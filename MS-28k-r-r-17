@@ -1,0 +1,24 @@
+[global]
+direct=1
+ioengine=libaio
+group_reporting=1
+per_job_logs=0
+time_based
+runtime=90
+ramp_time=30 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+filename=/dev/md1
+
+# This round is almost the same as round 15, but i test on /dev/md0 and add warm-up time
+# Eight 100g files had resided under /opt/fio/t1
+# see log, I got 136L in IOPS
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}

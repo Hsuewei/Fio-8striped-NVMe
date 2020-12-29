@@ -1,0 +1,28 @@
+[global]
+direct=1
+ioengine=libaio
+group_reporting=1
+per_job_logs=0
+time_based
+runtime=90
+ramp_time=30 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+filename=/dev/md0
+
+# ( Use filenmae=/dev/md0 without fio's file under mount point got higher IOPS ???? ) 
+# I remove all files that generated from fio's pre-randread phase
+# And add warm-up time(the rest configs are same as round 15)
+# See log, I got Higher IOPS (238K)
+
+
+
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}

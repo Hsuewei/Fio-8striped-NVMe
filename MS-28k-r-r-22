@@ -1,0 +1,29 @@
+[global]
+direct=1
+ioengine=libaio
+group_reporting=1
+per_job_logs=0
+time_based
+runtime=120
+ramp_time=50 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+filename=/dev/md0
+#directory=/opt/fio/t0
+
+# Use 8 stripe but 8 thread 
+# Use "filname=/dev/md0"
+# more warm-up time
+# round 22 is round 21 withount fio files by round 19 under mount point(/opt/fio/t0)
+# Got Higher IOPS? (higher than 273K)
+#	the answer is yes!!! 809K in IOPS also 23.2GB/s in bandwidth
+# See round 23 for non-group-reporting version
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}

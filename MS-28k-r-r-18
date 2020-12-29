@@ -1,0 +1,27 @@
+[global]
+direct=1
+ioengine=libaio
+group_reporting=1
+per_job_logs=0
+time_based
+runtime=90
+ramp_time=30 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+filename=/dev/md1
+
+# Do the same thing as round 16, but on /dev/md1
+# (remove all fio's files and use filename)
+# See log, I got 220K in  IOPS which is worse than round 16
+# Some NVMe had compromised? (1,3,5,7)?
+
+
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}

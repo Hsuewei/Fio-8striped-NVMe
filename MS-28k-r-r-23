@@ -1,0 +1,60 @@
+[global]
+direct=1
+ioengine=libaio
+#group_reporting=1
+per_job_logs=0
+time_based
+runtime=120
+ramp_time=50 # warm-up
+
+[28k_r_r]
+numjobs=8
+iodepth=32
+rw=randread
+bs=28k
+size=100g
+filename=/dev/md0
+#directory=/opt/fio/t0
+
+# Use 8 stripe but 8 thread 
+# Use "filname=/dev/md0"
+# more warm-up time
+# round 22 is round 21 withount fio files by round 19 under mount point(/opt/fio/t0)
+# round 23 is round 22 without group-reporting
+# Please compared with round 20, both are not group reporting
+# 	round 20 is "8 threads(numjobs=8), 8 NVMe stripe, directory=/opt/fio/t0, with fio files under"
+# 	(round 21 has proved that with fio files under, 
+# 	there is no great difference of using directory=?? or filname=?? )
+# 		Each thread got 34.2K in IOPS and 981MB/S in bandwidth
+# 		Combined 273K in IOPS and 7.7GB/s in bandwidth
+# 		Disk stats (read/write):
+# 		    md0: ios=48613921/0, merge=0/0, ticks=0/0,
+# 		    in_queue=0, util=0.00%, aggrios=6078567/0,
+# 		    aggrmerge=0/0, aggrticks=5412437/0, aggrin_queue=5419144, aggrutil=100.00%
+# 		    nvme0n1: ios=6078043/0, merge=0/0, ticks=5780258/0, in_queue=5787255, util=100.00%
+# 		    nvme1n1: ios=6079159/0, merge=0/0, ticks=6235513/0, in_queue=6246121, util=100.00%
+# 		    nvme2n1: ios=6078520/0, merge=0/0, ticks=4452876/0, in_queue=4457538, util=100.00%
+# 	  	    nvme3n1: ios=6077721/0, merge=0/0, ticks=4593408/0, in_queue=4598972, util=100.00%
+# 		    nvme4n1: ios=6080848/0, merge=0/0, ticks=5241539/0, in_queue=5248073, util=100.00%
+# 		    nvme5n1: ios=6078667/0, merge=0/0, ticks=5540011/0, in_queue=5545818, util=100.00%
+# 		    nvme6n1: ios=6078357/0, merge=0/0, ticks=5593006/0, in_queue=5599545, util=100.00%
+# 		    nvme7n1: ios=6077228/0, merge=0/0, ticks=5862887/0, in_queue=5869836, util=100.00%		
+# 	round 23 is "8 threads(numjobs=8), 8 NVme stripe, filename=/dev/md0, without fio files under"
+# 		Each thread got 103K in IOPS and 2940MB/s in bandwidth
+# 		Combined 815K in IOPS and 24GB/s in bandwidth
+#               Disk stats (read/write):
+#                   md0: ios=143985742/0, merge=0/0, ticks=0/0,
+#                   in_queue=0, util=0.00%, aggrios=18004022/0,
+#                   aggrmerge=0/0, aggrticks=4902432/0, aggrin_queue=4920317, aggrutil=100.00%
+#                   nvme0n1: ios=18003415/0, merge=0/0, ticks=4645706/0, in_queue=4657991, util=100.00%
+#                   nvme1n1: ios=18005480/0, merge=0/0, ticks=4685526/0, in_queue=4701798, util=100.00%
+#                   nvme2n1: ios=18002488/0, merge=0/0, ticks=4565520/0, in_queue=4579695, util=100.00%
+#                   nvme3n1: ios=18005456/0, merge=0/0, ticks=4718453/0, in_queue=4732464, util=100.00%
+#                   nvme4n1: ios=18002852/0, merge=0/0, ticks=5363593/0, in_queue=5385342, util=100.00%
+#                   nvme5n1: ios=18004560/0, merge=0/0, ticks=4990844/0, in_queue=5012667, util=100.00%
+#                   nvme6n1: ios=18003270/0, merge=0/0, ticks=4837181/0, in_queue=4854382, util=100.00%
+#                   nvme7n1: ios=18004661/0, merge=0/0, ticks=5412638/0, in_queue=5438197, util=100.00%
+
+#write_bw_log=${ID}_${DATETIME}
+#write_lat_log=${ID}_${DATETIME}
+#write_iops_log=${ID}_${DATETIME}
