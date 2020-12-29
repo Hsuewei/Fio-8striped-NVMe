@@ -52,6 +52,7 @@ Typically, most fio benchmarkers prefer to use `filename=/dev/certaindevice`, be
 1. [MS-r-r-11] use `directory=/opt/fio/t0` and, according to config, this will create 8 100g-file under */opt/fio/t0* 
 2. [MS-28r-r-r-15] use `filename=/dev/md0` directly on raw device. However, with the fio files created by round 11, we get close number in IOPS as round 11
 3. [MS-28k-r-r-16], I removed all fio files under the mount point */opt/fio/t0*, and use `filename=/dev/md0` directly on raw device.
+
 round | IOPS
 ---|----
 11 | 137K
