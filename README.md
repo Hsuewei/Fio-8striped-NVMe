@@ -31,6 +31,10 @@ Can refer to [here](https://hackmd.io/vYiT2eZoRDac0K8NU7SA-A#build) for build fi
   mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t0
   mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t1
   ```
+## Example
+``` bash
+./bin/fio /opt/fio/configs/MS-28k-r-r --output /opt/fio/results/MS-28k-r-r.log
+```
 ## Appendix: Clean the floor
 1. stop `mdadm`
    ``` bash
