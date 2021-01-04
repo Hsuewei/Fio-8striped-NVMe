@@ -7,6 +7,7 @@ Table of Contents
 * [Introduction](#introduction)
 * [Build Fio](#build-fio)  
 * [Environment](#environment)
+* [Environment: specical case](#environment-special-case)
 * [Learning](#learning)
 ## Introduction
 This repos contains multiple rounds of `fio` test result and configs of four Intel P4510 ssds's striped volumn.
@@ -31,7 +32,7 @@ Can refer to [here](https://hackmd.io/vYiT2eZoRDac0K8NU7SA-A#build) for build fi
   mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t0
   mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t1
   ```
-## Environment: special case
+## Environment special case
 For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `mdadm`, `LVM` and `mkfs.xfs`
 1. For [MS-28k-r-r-newto](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
     - create `mdadm` device
