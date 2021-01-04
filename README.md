@@ -34,25 +34,46 @@ Can refer to [here](https://hackmd.io/vYiT2eZoRDac0K8NU7SA-A#build) for build fi
 ## Environment: special case
 For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `mdadm`, `LVM` and `mkfs.xfs`
 1. For [MS-28k-r-r-newto](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
-  - create `mdadm` device
-    ``` bash
-    # create partition
-    for i in {0..7}; do parted -s -a optimal /dev/nvme${i}n1 mklabel gpt mkpart primary xfs 1MiB 100%; done
+    - create `mdadm` device
+      ``` bash
+      # create partition
+      for i in {0..7}; do parted -s -a optimal /dev/nvme${i}n1 mklabel gpt mkpart primary xfs 1MiB 100%; done
   
-    # create /dev/md0 with chunk size
-    mdadm --create --chunk=64K --verbose /dev/md0 --level=raid0 --raid-devices=4 /dev/nvme0n1p1 /dev/nvme2n1p1 /dev/nvme4n1p1 /dev/nvme6n1p1
+      # create /dev/md0 with chunk size
+      mdadm --create --chunk=64K --verbose /dev/md0 --level=raid0 --raid-devices=4 /dev/nvme0n1p1 /dev/nvme2n1p1 /dev/nvme4n1p1 /dev/nvme6n1p1
   
-    # create /dev/md1 with chunk size
-    mdadm --create --chunk=64K --verbose /dev/md1 --level=raid0 --raid-devices=4 /dev/nvme1n1p1 /dev/nvme3n1p1 /dev/nvme5n1p1 /dev/nvme7n1p1
-    mdadm --detail --scan >> /etc/mdadm.conf
-    ```
-  - Format and mount
-    ``` bash
-    # format xfs with specified chunk size
-    mkfs.xfs -f -b size=4096 -d su=64k,sw=8 /dev/md0
-    mkfs.xfs -f -b size=4096 -d su=64k,sw=8 /dev/md1
-    ```
-
+      # create /dev/md1 with chunk size
+      mdadm --create --chunk=64K --verbose /dev/md1 --level=raid0 --raid-devices=4 /dev/nvme1n1p1 /dev/nvme3n1p1 /dev/nvme5n1p1 /dev/nvme7n1p1
+      mdadm --detail --scan >> /etc/mdadm.conf
+      ```
+    - Format and mount
+      ``` bash
+      # format xfs with specified chunk size
+      mkfs.xfs -f -b size=4096 -d su=64k,sw=8 /dev/md0
+      mkfs.xfs -f -b size=4096 -d su=64k,sw=8 /dev/md1
+      
+      # mount
+      mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t0
+      mount -o noatime,nodiratime,discard /dev/md1 /opt/fio/t1
+      ```
+2. For [MS-28k-r-r-newt1-lvm](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt1-lvm)
+    - create `LVM` device
+      ``` bash
+      for i in {0..7}; do pvcreate /dev/nvme${i}n1; done
+      vgcreate --dataalignment 1024K --physicalextentsize 4096K nvmepool-1 \
+      /dev/nvme0n1 /dev/nvme2n1 /dev/nvme4n1 /dev/nvme6n1
+      vgcreate --dataalignment 1024K --physicalextentsize 4096K nvmepool-2 \
+      /dev/nvme1n1 /dev/nvme3n1 /dev/nvme5n1 /dev/nvme7n1
+      lvcreate --type raid0 --stripes 4 --stripesize 128k -l 100%FREE --name bdc nvmepool-1
+      lvcreate --type raid0 --stripes 4 --stripesize 128k -l 100%FREE --name bdc nvmepool-2
+      ```
+    - format and mount
+      ``` bash
+      mkfs.xfs -f -b size=4096 -d su=128k,sw=4 /dev/mapper/nvmepool--1-bdc
+      mkfs.xfs -f -b size=4096 -d su=128k,sw=4 /dev/mapper/nvmepool--2-bdc
+      mount -o noatime,nodiratime,discard /dev/mapper/nvmepool--1-bdc /opt/fio/t0
+      mount -o noatime,nodiratime,discard /dev/mapper/nvmepool--2-bdc /opt/fio/t1
+      ```
 ## Example
 ``` bash
 ./bin/fio /opt/fio/configs/MS-28k-r-r --output /opt/fio/results/MS-28k-r-r.log
@@ -88,3 +109,5 @@ round | IOPS
 ### Peak performance for single intel P4510
 1. [MS-28-r-r-20] use 8 NVMe 8 threads(numjobs=8) 
 2. [MS-28k-r-r-11] use 4 NVMe 8 threads(numjobs=8)
+
+### Align `chunksize` while `mkfs.xfs` in `mdadm` and `LVM`
