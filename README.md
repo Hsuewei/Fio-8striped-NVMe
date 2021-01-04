@@ -96,10 +96,10 @@ For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `m
    ```
 ## Learning:
 ### Use `filename=` or `directory=` ?
-Typically, most fio benchmarkers prefer to use `filename=/dev/certaindevice`, because directly performing test on raw device without partition or filesystem will give greater result. [MS-28k-r-r-11], [MS-28k-r-r-15] and [MS-28k-r-r-16] give some insight:
-1. [MS-28k-r-r-11] use `directory=/opt/fio/t0` and, according to config, this will create 8 100g-file under */opt/fio/t0* 
-2. [MS-28r-r-r-15] use `filename=/dev/md0` directly on raw device. However, with the fio files created by round 11, we get close number in IOPS as round 11
-3. [MS-28k-r-r-16], I removed all fio files under the mount point */opt/fio/t0*, and use `filename=/dev/md0` directly on raw device.
+Typically, most fio benchmarkers prefer to use `filename=/dev/certaindevice`, because directly performing test on raw device without partition or filesystem will give greater result. [MS-28k-r-r-11](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-11.log), [MS-28k-r-r-15](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-15.log) and [MS-28k-r-r-16](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-16.log) give some insight:
+1. [MS-28k-r-r-11](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-11.log) use `directory=/opt/fio/t0` and, according to config, this will create 8 100g-file under */opt/fio/t0* 
+2. [MS-28r-r-r-15](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-15.log) use `filename=/dev/md0` directly on raw device. However, with the fio files created by round 11, we get close number in IOPS as round 11
+3. [MS-28k-r-r-16](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-16.log), I removed all fio files under the mount point */opt/fio/t0*, and use `filename=/dev/md0` directly on raw device.
 
 round | IOPS
 ---|----
@@ -108,7 +108,13 @@ round | IOPS
 16 | 238K
 
 ### Peak performance for single intel P4510
-1. [MS-28-r-r-20] use 8 NVMe 8 threads(numjobs=8) 
-2. [MS-28k-r-r-11] use 4 NVMe 8 threads(numjobs=8)
+1. [MS-28-r-r-20](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-20.log) use 8 NVMe 8 threads(numjobs=8) 
+2. [MS-28k-r-r-11](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-11.log) use 4 NVMe 8 threads(numjobs=8)
 
 ### Align `chunksize` while `mkfs.xfs` in `mdadm` and `LVM`
+1. `mdadm` after aligning chunk size with `mkfs.xfs`
+  - See IOPS in [MS-28-r-r-t0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-t0.log) and [MS-28-r-r-newt0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log), the numbers grow significantly.
+2. `LVM` and `mdadm` performance?
+  - See IOPS and bandwidth in [MS-28k-r-r-newt0-lvm](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0-lvm.log) and [MS-28k-r-r-newt0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
+  - `LVM` is slightly worse than `mdadm`
+  - Also check the *Disk stats (read/write)* in logs, two types have different ways of showing results
