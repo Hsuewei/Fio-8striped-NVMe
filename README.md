@@ -34,7 +34,7 @@ Can refer to [here](https://hackmd.io/vYiT2eZoRDac0K8NU7SA-A#build) for build fi
   ```
 ## Environment special case
 For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `mdadm`, `LVM` and `mkfs.xfs`
-1. For [MS-28k-r-r-newto](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
+1. For [MS-28k-r-r-newt*](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0)
     - create `mdadm` device
       ``` bash
       # create partition
@@ -57,7 +57,7 @@ For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `m
       mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t0
       mount -o noatime,nodiratime,discard /dev/md1 /opt/fio/t1
       ```
-2. For [MS-28k-r-r-newt1-lvm](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt1-lvm)
+2. For [MS-28k-r-r-newt*-lvm](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt1-lvm)
     - create `LVM` device
       ``` bash
       for i in {0..7}; do pvcreate /dev/nvme${i}n1; done
@@ -80,20 +80,42 @@ For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `m
 ./bin/fio /opt/fio/configs/MS-28k-r-r --output /opt/fio/results/MS-28k-r-r.log
 ```
 ## Appendix: Clean the floor
-1. stop `mdadm`
+- stop `mdadm`
    ``` bash
    mdadm --stop /dev/md0
    mdadm --stop /dev/md1
    for i in {0..7}; do mdadm --zero-superblock /dev/nvme${i}n1p1; done
    ```
-2. clean partition with `dd`
+- clean partition with `dd`
    ``` bash
    for i in {0..7}; do dd if=/dev/zero of=/dev/nvme${i}n1 bs=512 count=10000; done
    ```
-3. remove `mdadm.conf`
+- remove `mdadm.conf`
    ``` bash
    sed -i.bak "\@^ARRAY@d" /etc/mdadm.conf
    ```
+- remove LVM with docker and kubelet within
+  ``` bash
+  # stop related processes
+  systemctl stop docker; systemctl stop kubelet; systemctl stop containerd
+  
+  # First remove any docker-related and kubelet-related files
+  # if can not, store stderr to file and extract them, and then umount one by one
+  cd /mnt/local-storage; rm -rf * 2> /tmp/test; cat /tmp/test | awk 'BEGIN{FS=":"} \
+  {RE=substr( substr($2,16),2,length(substr($2,16))-2); \
+  system("umount "RE)}' ; rm -rf * ; cd ~ ; umount /mnt/local-storage/
+  
+  # check is there any process related to device
+  grep -e "/dev/md0" /proc/[0-9]*/mountinfo | \
+  awk 'BEGIN{FS="/"}{system("ps -fp "$3); print("----")}
+  
+  # if does, kill them(most of processes' CMD field is /pause )
+  grep -e "/dev/md0" /proc/[0-9]*/mountinfo | \
+  awk 'BEGIN{FS="/"}{system("kill "$3)}'
+ 
+  # umount again
+  umount /mnt/local-storage
+  ```
 ## Learning:
 ### Use `filename=` or `directory=` ?
 Typically, most fio benchmarkers prefer to use `filename=/dev/certaindevice`, because directly performing test on raw device without partition or filesystem will give greater result. [MS-28k-r-r-11](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-11.log), [MS-28k-r-r-15](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-15.log) and [MS-28k-r-r-16](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-16.log) give some insight:
