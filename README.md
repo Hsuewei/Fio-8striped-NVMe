@@ -31,6 +31,28 @@ Can refer to [here](https://hackmd.io/vYiT2eZoRDac0K8NU7SA-A#build) for build fi
   mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t0
   mount -o noatime,nodiratime,discard /dev/md0 /opt/fio/t1
   ```
+## Environment: special case
+For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `mdadm`, `LVM` and `mkfs.xfs`
+1. For [MS-28k-r-r-newto](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
+  - create `mdadm` device
+    ``` bash
+    # create partition
+    for i in {0..7}; do parted -s -a optimal /dev/nvme${i}n1 mklabel gpt mkpart primary xfs 1MiB 100%; done
+  
+    # create /dev/md0 with chunk size
+    mdadm --create --chunk=64K --verbose /dev/md0 --level=raid0 --raid-devices=4 /dev/nvme0n1p1 /dev/nvme2n1p1 /dev/nvme4n1p1 /dev/nvme6n1p1
+  
+    # create /dev/md1 with chunk size
+    mdadm --create --chunk=64K --verbose /dev/md1 --level=raid0 --raid-devices=4 /dev/nvme1n1p1 /dev/nvme3n1p1 /dev/nvme5n1p1 /dev/nvme7n1p1
+    mdadm --detail --scan >> /etc/mdadm.conf
+    ```
+  - Format and mount
+    ``` bash
+    # format xfs with specified chunk size
+    mkfs.xfs -f -b size=4096 -d su=64k,sw=8 /dev/md0
+    mkfs.xfs -f -b size=4096 -d su=64k,sw=8 /dev/md1
+    ```
+
 ## Example
 ``` bash
 ./bin/fio /opt/fio/configs/MS-28k-r-r --output /opt/fio/results/MS-28k-r-r.log
