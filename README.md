@@ -113,8 +113,8 @@ round | IOPS
 
 ### Align `chunksize` while `mkfs.xfs` in `mdadm` and `LVM`
 1. `mdadm` after aligning chunk size with `mkfs.xfs`
-  - See IOPS in [MS-28-r-r-t0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-t0.log) and [MS-28-r-r-newt0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log), the numbers grow significantly.
+    - See IOPS in [MS-28-r-r-t0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-t0.log) and [MS-28-r-r-newt0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log), the numbers grow significantly.
 2. `LVM` and `mdadm` performance?
-  - See IOPS and bandwidth in [MS-28k-r-r-newt0-lvm](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0-lvm.log) and [MS-28k-r-r-newt0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
-  - `LVM` is slightly worse than `mdadm`
-  - Also check the *Disk stats (read/write)* in logs, two types have different ways of showing results
+    - See IOPS and bandwidth in [MS-28k-r-r-newt0-lvm](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0-lvm.log) and [MS-28k-r-r-newt0](https://github.com/Hsuewei/Fio-8striped-NVMe/blob/main/MS-28k-r-r-newt0.log)
+    - `LVM` is slightly worse than `mdadm`
+    - Also check the *Disk stats (read/write)* in logs, two types have different ways of showing results
