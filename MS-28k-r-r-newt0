@@ -1,0 +1,19 @@
+[28k_r_r]
+# name=template-name
+ioengine=libaio
+iodepth=32
+rw=randread
+bs=28k
+direct=1
+size=100g
+time_based
+runtime=120 # more time
+ramp_time=50 # warm-up
+group_reporting=1
+per_job_logs=0
+directory=/opt/fio/t0
+#directory=/opt/fio/t1
+write_bw_log=${ID}_${DATETIME}
+write_lat_log=${ID}_${DATETIME}
+write_iops_log=${ID}_${DATETIME}
+numjobs=8
