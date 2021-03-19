@@ -107,7 +107,7 @@ For rounds `MS-28k-r-r-new*` series, I address the alignment of chunk size in `m
   
   # check is there any process related to device
   grep -e "/dev/md0" /proc/[0-9]*/mountinfo | \
-  awk 'BEGIN{FS="/"}{system("ps -fp "$3); print("----")}
+  awk 'BEGIN{FS="/"}{system("ps -fp "$3); print("----")}'
   
   # if does, kill them(most of processes' CMD field is /pause )
   grep -e "/dev/md0" /proc/[0-9]*/mountinfo | \
